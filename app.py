@@ -2,6 +2,7 @@ import os
 from flask import Flask, render_template, request, redirect, url_for, session, flash
 from werkzeug.security import generate_password_hash, check_password_hash
 import sqlite3
+from datetime import datetime
 
 app = Flask(__name__)
 app.secret_key = "super_secret_aditya_key_2026"
@@ -48,13 +49,17 @@ init_db()
 
 @app.route('/')
 def home():
+    # Fixes Bad Request: Automatically select today's date if no date is sent by browser
+    selected_date = request.args.get('date')
+    if not selected_date:
+        selected_date = datetime.now().strftime('%Y-%m-%d')
+
     conn = sqlite3.connect(DB_FILE)
     cursor = conn.cursor()
-    cursor.execute("SELECT seat, time FROM appointments")
+    cursor.execute("SELECT seat, time FROM appointments WHERE date=?", (selected_date,))
     rows = cursor.fetchall()
     conn.close()
     
-    # कौन सी कुर्सी किस टाइम बुक है, उसकी लिस्ट बनाना
     booked_slots = {}
     for row in rows:
         seat, time = row[0], row[1]
@@ -62,15 +67,18 @@ def home():
             booked_slots[time] = {}
         booked_slots[time][seat] = True
 
-    available_dates = ["2026-06-15", "2026-06-16", "2026-06-17"]
-    slots = ['09:00 AM', '11:00 AM', '02:00 PM', '05:00 PM']
+    slots = [
+        '08:30 AM', '09:20 AM', '10:10 AM', '11:00 AM', '11:50 AM', 
+        '12:40 PM', '01:30 PM', '02:20 PM', '03:10 PM', '04:00 PM', 
+        '04:50 PM', '05:40 PM', '06:30 PM', '07:20 PM', '08:10 PM'
+    ]
     
     logged_in = 'user_phone' in session
     name = session.get('user_name', '')
     
     return render_template('index.html', logged_in=logged_in, name=name, 
                            slots=slots, bookings=booked_slots, 
-                           available_dates=available_dates, owner_phone=OWNER_DETAILS['phone'])
+                           selected_date=selected_date, owner_phone=OWNER_DETAILS['phone'])
 
 @app.route('/signup', methods=['GET', 'POST'])
 def signup():
@@ -103,12 +111,12 @@ def login():
         conn = sqlite3.connect(DB_FILE)
         cursor = conn.cursor()
         cursor.execute("SELECT * FROM users WHERE phone = ?", (phone,))
-        user = cursor.fetchall()
+        user = cursor.fetchone()
         conn.close()
         
-        if user and check_password_hash(user[0][4], password):
-            session['user_phone'] = user[0][2]
-            session['user_name'] = user[0][1]
+        if user and check_password_hash(user[4], password):
+            session['user_phone'] = user[2]
+            session['user_name'] = user[1]
             flash("Logged in successfully!", "success")
             return redirect(url_for('home'))
         else:
@@ -119,6 +127,18 @@ def login():
 def logout():
     session.clear()
     return redirect(url_for('home'))
+
+@app.route('/confirm', methods=['POST'])
+def confirm_booking_view():
+    if 'user_phone' not in session:
+        flash("Please login first to book a slot!", "warning")
+        return redirect(url_for('login'))
+        
+    time = request.form.get('time')
+    seat = request.form.get('seat')
+    date = request.form.get('date')
+    
+    return render_template('confirm.html', time=time, seat=seat, date=date, name=session['user_name'], phone=session['user_phone'])
 
 @app.route('/book', methods=['POST'])
 def book():
@@ -132,8 +152,7 @@ def book():
     
     conn = sqlite3.connect(DB_FILE)
     cursor = conn.cursor()
-    # चेक करना कि कहीं किसी ने पहले ही तो बुक नहीं कर लिया
-    cursor.execute("SELECT * FROM appointments WHERE seat=? AND time=?", (seat, time))
+    cursor.execute("SELECT * FROM appointments WHERE seat=? AND time=? AND date=?", (seat, time, date))
     already_booked = cursor.fetchone()
     
     if already_booked:
@@ -146,8 +165,19 @@ def book():
     conn.commit()
     conn.close()
     
-    flash(f"🎉 {seat} at {time} Booked Successfully!", "success")
+    flash("🎉 Appointment Booked Successfully!", "success")
     return redirect(url_for('home'))
+
+@app.route('/my_bookings')
+def my_bookings():
+    if 'user_phone' not in session:
+        return redirect(url_for('login'))
+    conn = sqlite3.connect(DB_FILE)
+    cursor = conn.cursor()
+    cursor.execute("SELECT id, seat, date, time FROM appointments WHERE user_phone=?", (session['user_phone'],))
+    user_slots = cursor.fetchall()
+    conn.close()
+    return render_template('my_bookings.html', bookings=user_slots)
 
 @app.route('/admin', methods=['GET', 'POST'])
 def admin_verify():
@@ -197,4 +227,3 @@ def super_admin():
 
 if __name__ == '__main__':
     app.run(debug=True)
-    
