@@ -8,24 +8,20 @@ app.secret_key = "super_secret_aditya_key_2026"
 
 DB_FILE = "barber_shop.db"
 
-# 👑 सुपर एडमिन (सिर्फ आपके लिए - आदित्य कुमार)
 SUPER_ADMIN = {
     "username": "aditya_developer",
-    "password_hash": generate_password_hash("Aditya@2026!") # आपका खुफिया पासवर्ड
+    "password_hash": generate_password_hash("Aditya@2026!")
 }
 
-# 💈 दुकानदार/मालिक की डिटेल्स (दुकानदार के लॉगिन के लिए)
 OWNER_DETAILS = {
     "name": "Aditya Kumhar",
     "phone": "9876543210",
     "dob": "2000-01-01"
 }
 
-# 🗄️ डेटाबेस सेटअप (ऐप चालू होते ही अपने आप टेबल बन जाएंगे)
 def init_db():
     conn = sqlite3.connect(DB_FILE)
     cursor = conn.cursor()
-    # 1. ग्राहकों के अकाउंट की टेबल
     cursor.execute('''
         CREATE TABLE IF NOT EXISTS users (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -35,13 +31,12 @@ def init_db():
             password TEXT NOT NULL
         )
     ''')
-    # 2. बुकिंग की टेबल
     cursor.execute('''
         CREATE TABLE IF NOT EXISTS appointments (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             user_phone TEXT NOT NULL,
             user_name TEXT NOT NULL,
-            service TEXT NOT NULL,
+            seat TEXT NOT NULL,
             date TEXT NOT NULL,
             time TEXT NOT NULL
         )
@@ -51,14 +46,32 @@ def init_db():
 
 init_db()
 
-# 🏠 होम पेज (कस्टमर यहाँ से शुरू करेगा)
 @app.route('/')
 def home():
-    if 'user_phone' in session:
-        return render_template('index.html', logged_in=True, name=session['user_name'])
-    return render_template('index.html', logged_in=False)
+    conn = sqlite3.connect(DB_FILE)
+    cursor = conn.cursor()
+    cursor.execute("SELECT seat, time FROM appointments")
+    rows = cursor.fetchall()
+    conn.close()
+    
+    # कौन सी कुर्सी किस टाइम बुक है, उसकी लिस्ट बनाना
+    booked_slots = {}
+    for row in rows:
+        seat, time = row[0], row[1]
+        if time not in booked_slots:
+            booked_slots[time] = {}
+        booked_slots[time][seat] = True
 
-# 📝 ग्राहक साइन-अप (Sign Up)
+    available_dates = ["2026-06-15", "2026-06-16", "2026-06-17"]
+    slots = ['09:00 AM', '11:00 AM', '02:00 PM', '05:00 PM']
+    
+    logged_in = 'user_phone' in session
+    name = session.get('user_name', '')
+    
+    return render_template('index.html', logged_in=logged_in, name=name, 
+                           slots=slots, bookings=booked_slots, 
+                           available_dates=available_dates, owner_phone=OWNER_DETAILS['phone'])
+
 @app.route('/signup', methods=['GET', 'POST'])
 def signup():
     if request.method == 'POST':
@@ -66,7 +79,6 @@ def signup():
         phone = request.form['phone']
         age = request.form['age']
         password = request.form['password']
-        
         hashed_pw = generate_password_hash(password)
         
         try:
@@ -80,10 +92,8 @@ def signup():
             return redirect(url_for('login'))
         except sqlite3.IntegrityError:
             flash("This Mobile Number is already registered!", "danger")
-            
     return render_template('signup.html')
 
-# 🔑 ग्राहक लॉगिन (Login)
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
@@ -103,38 +113,42 @@ def login():
             return redirect(url_for('home'))
         else:
             flash("Invalid Mobile Number or Password!", "danger")
-            
     return render_template('login.html')
 
-# 🚪 लॉगआउट (Logout)
 @app.route('/logout')
 def logout():
     session.clear()
-    flash("Logged out successfully.", "info")
     return redirect(url_for('home'))
 
-# 📅 स्लॉट बुकिंग (सिर्फ लॉगिन किए हुए ग्राहक ही कर सकते हैं)
 @app.route('/book', methods=['POST'])
 def book():
     if 'user_phone' not in session:
-        flash("Please login first to book an appointment!", "warning")
+        flash("Please login first to book a slot!", "warning")
         return redirect(url_for('login'))
         
-    service = request.form['service']
-    date = request.form['date']
+    seat = request.form['seat']
     time = request.form['time']
+    date = request.form['date']
     
     conn = sqlite3.connect(DB_FILE)
     cursor = conn.cursor()
-    cursor.execute("INSERT INTO appointments (user_phone, user_name, service, date, time) VALUES (?, ?, ?, ?, ?)",
-                   (session['user_phone'], session['user_name'], service, date, time))
+    # चेक करना कि कहीं किसी ने पहले ही तो बुक नहीं कर लिया
+    cursor.execute("SELECT * FROM appointments WHERE seat=? AND time=?", (seat, time))
+    already_booked = cursor.fetchone()
+    
+    if already_booked:
+        conn.close()
+        flash("Sorry, this seat is already booked by someone else!", "danger")
+        return redirect(url_for('home'))
+        
+    cursor.execute("INSERT INTO appointments (user_phone, user_name, seat, date, time) VALUES (?, ?, ?, ?, ?)",
+                   (session['user_phone'], session['user_name'], seat, date, time))
     conn.commit()
     conn.close()
     
-    flash("Your Appointment is Booked Successfully! 🎉", "success")
+    flash(f"🎉 {seat} at {time} Booked Successfully!", "success")
     return redirect(url_for('home'))
 
-# 💈 दुकानदार/मालिक का वेरिफिकेशन पेज (/admin)
 @app.route('/admin', methods=['GET', 'POST'])
 def admin_verify():
     if request.method == 'POST':
@@ -147,29 +161,24 @@ def admin_verify():
             return redirect(url_for('owner_dashboard'))
         else:
             flash("Invalid Owner Credentials! Access Denied.", "danger")
-            
     return render_template('admin_login.html')
 
-# 📊 दुकानदार का डैशबोर्ड
 @app.route('/owner-dashboard')
 def owner_dashboard():
     if not session.get('owner_logged_in'):
         return redirect(url_for('admin_verify'))
-        
     conn = sqlite3.connect(DB_FILE)
     cursor = conn.cursor()
-    cursor.execute("SELECT * FROM appointments")
+    cursor.execute("SELECT id, user_name, user_phone, seat, date, time FROM appointments")
     bookings = cursor.fetchall()
     conn.close()
     return render_template('owner_dashboard.html', bookings=bookings)
 
-# 🕵️ सीक्रेट सुपर एडमिन पेज (सिर्फ आपके लिए - आदित्य कुमार)
 @app.route('/super-secret-aditya-control', methods=['GET', 'POST'])
 def super_admin():
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
-        
         if username == SUPER_ADMIN['username'] and check_password_hash(SUPER_ADMIN['password_hash'], password):
             session['super_admin_logged_in'] = True
         else:
@@ -184,7 +193,6 @@ def super_admin():
         total_accounts = cursor.fetchone()[0]
         conn.close()
         return render_template('super_admin.html', users=all_users, total=total_accounts)
-        
     return render_template('super_login.html')
 
 if __name__ == '__main__':
