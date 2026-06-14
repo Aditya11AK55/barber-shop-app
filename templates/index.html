@@ -28,6 +28,7 @@
         h1 { color: #ffcc00; margin: 0; font-size: 28px; font-weight: bold; }
         .welcome-text { color: #aaa; margin: 10px 0 0 0; font-size: 16px; }
         
+        /* Buttons Layout */
         .auth-box { display: flex; flex-direction: column; gap: 15px; width: 100%; max-width: 320px; }
         @media(min-width: 600px) {
             .auth-box { flex-direction: row; max-width: none; width: auto; }
@@ -35,9 +36,9 @@
         
         .auth-btn { background: #383838; color: #ffcc00; border: 2px solid #ffcc00; padding: 12px 30px; font-weight: bold; text-decoration: none; border-radius: 6px; font-size: 16px; text-align: center; display: block; width: 100%; box-sizing: border-box; }
         .signup-btn { background: #ffcc00; color: black; border-color: #ffcc00; }
+        .bookings-btn { background: #2ecc71; color: white; border-color: #2ecc71; }
         .logout-btn { background: #ff4757; color: white; padding: 12px 30px; font-weight: bold; text-decoration: none; border-radius: 6px; font-size: 16px; text-align: center; display: block; width: 100%; box-sizing: border-box; }
         
-        /* 📅 ग्रीन बॉक्स की जगह नया रिस्पॉन्सिव फ़िल्टर बॉक्स */
         .date-filter-box { 
             background: #2d2d2d; 
             padding: 20px; 
@@ -53,7 +54,6 @@
             .date-filter-box { flex-direction: row; justify-content: space-between; }
         }
 
-        /* 🗓️ डेट सिलेक्ट करने वाला इनपुट डिज़ाइन */
         .date-picker-input {
             background: #1a1a1a;
             color: #ffcc00;
@@ -96,6 +96,7 @@
     
     <div class="auth-box">
         {% if logged_in %}
+            <a href="/my_bookings" class="auth-btn bookings-btn">📅 My Bookings</a>
             <a href="/logout" class="logout-btn">🚪 Logout</a>
         {% else %}
             <a href="/login" class="auth-btn">🔐 Login</a>
@@ -130,7 +131,7 @@
                 {% if bookings[slot] is defined and bookings[slot]['Chair 1'] is defined %}
                     <span class="status-booked">👤 Booked ({{ bookings[slot]['Chair 1'] }})</span>
                 {% else %}
-                    <form action="/book" method="POST" style="margin: 0;">
+                    <form action="/confirm" method="POST" style="margin: 0;">
                         <input type="hidden" name="time" value="{{ slot }}">
                         <input type="hidden" name="seat" value="Chair 1">
                         <input type="hidden" name="date" value="{{ selected_date }}">
@@ -144,7 +145,7 @@
                 {% if bookings[slot] is defined and bookings[slot]['Chair 2'] is defined %}
                     <span class="status-booked">👤 Booked ({{ bookings[slot]['Chair 2'] }})</span>
                 {% else %}
-                    <form action="/book" method="POST" style="margin: 0;">
+                    <form action="/confirm" method="POST" style="margin: 0;">
                         <input type="hidden" name="time" value="{{ slot }}">
                         <input type="hidden" name="seat" value="Chair 2">
                         <input type="hidden" name="date" value="{{ selected_date }}">
@@ -161,21 +162,18 @@
             var dateInput = document.getElementById("booking_date");
             var today = new Date();
             
-            // Format today's date as YYYY-MM-DD
             var yyyy = today.getFullYear();
             var mm = String(today.getMonth() + 1).padStart(2, '0');
             var dd = String(today.getDate()).padStart(2, '0');
             var minDate = yyyy + '-' + mm + '-' + dd;
             
-            // Calculate max date (30 days ahead)
             var maxTarget = new Date();
             maxTarget.setDate(today.getDate() + 30);
             var max_yyyy = maxTarget.getFullYear();
             var max_mm = String(maxTarget.getMonth() + 1).padStart(2, '0');
             var max_dd = String(maxTarget.getDate()).padStart(2, '0');
-            var maxDate = max_yyyy + '-' + max_mm + '-' + max_max_dd;
+            var maxDate = max_yyyy + '-' + max_mm + '-' + max_dd;
             
-            // Set attributes to prevent backward or long-term selection
             dateInput.setAttribute("min", minDate);
             dateInput.setAttribute("max", maxDate);
         });
