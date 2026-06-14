@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Barber Shop - Schedule</title>
+    <style>
+        body { font-family: Arial, sans-serif; background-color: #1a1a1a; color: #fff; padding: 20px; }
+        .header { display: flex; justify-content: space-between; align-items: center; background: #2d2d2d; padding: 15px 30px; border-radius: 10px; margin-bottom: 20px; border: 1px solid #444; }
+        h1 { color: #ffcc00; margin: 0; font-size: 24px; }
+        .date-filter-box { background: #2d2d2d; padding: 15px; border-radius: 8px; text-align: center; margin-bottom: 20px; border: 1px solid #ffcc00; display: flex; justify-content: space-between; align-items: center; }
+        select { padding: 8px 15px; background: #1a1a1a; color: white; border: 1px solid #ffcc00; border-radius: 4px; font-weight: bold; font-size: 15px; }
+        .grid-container { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; }
+        .slot-card { background: #2d2d2d; border-radius: 8px; padding: 15px; border-left: 5px solid #ffcc00; box-shadow: 0 4px 6px rgba(0,0,0,0.3); }
+        .seat-box { background: #383838; padding: 10px; border-radius: 5px; margin-top: 10px; text-align: center; }
+        .book-btn { background: #ffcc00; color: #000; padding: 6px 12px; font-weight: bold; border-radius: 4px; text-decoration: none; display: inline-block; margin-top: 5px; font-size: 13px; }
+        .status-booked { color: #e74c3c; font-size: 13px; font-weight: bold; display: block; margin-top: 5px; }
+        .call-btn { background: #2ecc71; color: white; padding: 8px 15px; font-weight: bold; border-radius: 5px; text-decoration: none; font-size: 14px; display: inline-block; }
+    </style>
+</head>
+<body>
+
+<div class="header">
+    <div>
+        <h1>✂️ Appointment Schedule</h1>
+        <p style="color: #aaa; margin: 5px 0 0 0;">Welcome, <strong>{{ user.name }}</strong>!</p>
+    </div>
+    <div>
+        <a href="tel:{{ owner_phone }}" class="call-btn">📞 Call Owner</a>
+        <a href="/my_bookings" style="background: #383838; color: #ffcc00; border: 1px solid #ffcc00; padding: 8px 15px; font-weight: bold; text-decoration: none; border-radius: 5px; margin-left: 10px;">📋 My Bookings</a>
+    </div>
+</div>
+
+<div class="date-filter-box">
+    <form method="GET" action="/booking">
+        <label style="font-size: 16px; font-weight: bold; color: #ffcc00; margin-right: 10px;">📅 Select Date to View Slots:</label>
+        <select name="date" onchange="this.form.submit()">
+            {% for d in available_dates %}
+                <option value="{{ d }}" {% if d == today_date %}selected{% endif %}>{{ d }}</option>
+            {% endfor %}
+        </select>
+    </form>
+    <div style="font-size: 14px; color: #aaa;">Shop Support: <strong style="color: #2ecc71;">{{ owner_phone }}</strong></div>
+</div>
+
+<div class="grid-container">
+    {% for slot in slots %}
+    <div class="slot-card">
+        <span style="font-size: 16px; font-weight: bold; color: #ffcc00;">⏰ {{ slot }}</span>
+        
+        <div class="seat-box">
+            <strong>Chair 1</strong>
+            {% if bookings[slot]['Seat 1'] == None %}
+                <br><a href="/confirm_booking_view?slot={{ slot }}&seat=Seat 1&date={{ today_date }}" class="book-btn">Select Slot</a>
+            {% else %}
+                <span class="status-booked">👤 Booked</span>
+            {% endif %}
+        </div>
+        
+        <div class="seat-box">
+            <strong>Chair 2</strong>
+            {% if bookings[slot]['Seat 2'] == None %}
+                <br><a href="/confirm_booking_view?slot={{ slot }}&seat=Seat 2&date={{ today_date }}" class="book-btn">Select Slot</a>
+            {% else %}
+                <span class="status-booked">👤 Booked</span>
+            {% endif %}
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+</body>
+</html>

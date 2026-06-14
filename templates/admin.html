@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Owner Dashboard</title>
+    <style>
+        body { font-family: Arial, sans-serif; background-color: #1a1a1a; color: #fff; padding: 20px; }
+        .admin-container { max-width: 900px; margin: 20px auto; background: #2d2d2d; padding: 25px; border-radius: 10px; border: 1px solid #ffcc00; box-shadow: 0 4px 15px rgba(0,0,0,0.5); }
+        .admin-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; }
+        h1 { color: #ffcc00; margin: 0; }
+        .filter-box { background: #383838; padding: 20px; border-radius: 8px; text-align: center; margin-bottom: 25px; border: 1px solid #ffcc00; }
+        label { font-size: 18px; font-weight: bold; color: #ffcc00; margin-right: 15px; }
+        select { padding: 12px 20px; font-size: 16px; border-radius: 5px; background: #1a1a1a; color: white; border: 1px solid #ffcc00; font-weight: bold; cursor: pointer; }
+        table { width: 100%; border-collapse: collapse; background: #333; margin-top: 15px; }
+        th, td { padding: 14px; text-align: left; border-bottom: 1px solid #444; }
+        th { background-color: #ffcc00; color: black; font-weight: bold; font-size: 16px; }
+        tr:hover { background-color: #3d3d3d; }
+        .empty-text { color: #aaa; font-style: italic; }
+        .customer-text { color: #2ecc71; font-weight: bold; font-size: 15px; }
+        .logout-btn { background: #e74c3c; color: white; padding: 10px 20px; font-weight: bold; text-decoration: none; border-radius: 5px; }
+    </style>
+</head>
+<body>
+<div class="admin-container">
+    <div class="admin-header">
+        <h1>👑 Barber Shop - Owner Dashboard</h1>
+        <a href="/admin/logout" class="logout-btn">🔒 Secure Logout</a>
+    </div>
+    
+    <div class="filter-box">
+        <form method="GET" action="/admin/dashboard">
+            <label>📅 Select Date to View Appointments:</label>
+            <select name="date" onchange="this.form.submit()">
+                {% for d in available_dates %}
+                    <option value="{{ d }}" {% if d == chosen_date %}selected{% endif %}>{{ d }}</option>
+                {% endfor %}
+            </select>
+        </form>
+    </div>
+
+    <h3>📅 Showing Schedule for Date: <span style="color: #ffcc00; background: #1a1a1a; padding: 4px 10px; border-radius: 5px;">{{ chosen_date }}</span></h3>
+    
+    <table>
+        <thead>
+            <tr>
+                <th>🕒 Time Slot</th>
+                <th>🪑 Chair 1 Appointment</th>
+                <th>🪑 Chair 2 Appointment</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for slot in slots %}
+            <tr>
+                <td><strong>{{ slot }}</strong></td>
+                <td>
+                    {% if bookings[slot]['Seat 1'] %}
+                        <span class="customer-text">👤 {{ bookings[slot]['Seat 1']['name'] }}</span><br>
+                        <small style="color: #eee;">📞 {{ bookings[slot]['Seat 1']['phone'] }} (Age: {{ bookings[slot]['Seat 1']['age'] }})</small>
+                    {% else %}
+                        <span class="empty-text">Empty</span>
+                    {% endif %}
+                </td>
+                <td>
+                    {% if bookings[slot]['Seat 2'] %}
+                        <span class="customer-text">👤 {{ bookings[slot]['Seat 2']['name'] }}</span><br>
+                        <small style="color: #eee;">📞 {{ bookings[slot]['Seat 2']['phone'] }} (Age: {{ bookings[slot]['Seat 2']['age'] }})</small>
+                    {% else %}
+                        <span class="empty-text">Empty</span>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+</body>
+</html>
