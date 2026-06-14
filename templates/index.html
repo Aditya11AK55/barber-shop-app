@@ -9,7 +9,6 @@
         .header { display: flex; justify-content: space-between; align-items: center; background: #2d2d2d; padding: 15px 30px; border-radius: 10px; margin-bottom: 20px; border: 1px solid #444; }
         h1 { color: #ffcc00; margin: 0; font-size: 24px; }
         .date-filter-box { background: #2d2d2d; padding: 15px; border-radius: 8px; text-align: center; margin-bottom: 20px; border: 1px solid #ffcc00; display: flex; justify-content: space-between; align-items: center; }
-        select { padding: 8px 15px; background: #1a1a1a; color: white; border: 1px solid #ffcc00; border-radius: 4px; font-weight: bold; font-size: 15px; }
         .grid-container { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; }
         .slot-card { background: #2d2d2d; border-radius: 8px; padding: 15px; border-left: 5px solid #ffcc00; box-shadow: 0 4px 6px rgba(0,0,0,0.3); }
         .seat-box { background: #383838; padding: 10px; border-radius: 5px; margin-top: 10px; text-align: center; }
@@ -34,7 +33,7 @@
     <div>
         <h1>✂️ Appointment Schedule</h1>
         {% if logged_in %}
-            <p style="color: #2ecc71; margin: 5px 0 0 0;">Welcome back, <strong>{{ name }}</strong>!  ● Logged In</p>
+            <p style="color: #2ecc71; margin: 5px 0 0 0;">Welcome back, <strong>{{ name }}</strong>!</p>
         {% else %}
             <p style="color: #aaa; margin: 5px 0 0 0;">Welcome, Guest! Please login to book slots.</p>
         {% endif %}
@@ -49,27 +48,45 @@
     </div>
 </div>
 
+<div class="date-filter-box">
+    <div>
+        <span style="font-size: 16px; font-weight: bold; color: #ffcc00;">📅 Date: 2026-06-15</span>
+    </div>
+    <div style="font-size: 14px; color: #aaa;">Shop Support: <strong style="color: #2ecc71;">{{ owner_phone }}</strong></div>
+</div>
+
 <div class="grid-container">
-    {% set sample_slots = ['09:00 AM', '11:00 AM', '02:00 PM', '05:00 PM'] %}
-    
-    {% for slot in sample_slots %}
+    {% for slot in slots %}
     <div class="slot-card">
         <span style="font-size: 16px; font-weight: bold; color: #ffcc00;">⏰ {{ slot }}</span>
         
-        <form action="/book" method="POST">
-            <input type="hidden" name="time" value="{{ slot }}">
-            <input type="hidden" name="date" value="2026-06-15"> <div class="seat-box">
-                <strong>Chair Service</strong>
-                <br>
-                <select name="service" style="margin: 5px 0; padding: 3px; font-size: 12px;">
-                    <option value="Haircut">Haircut (बाल काटना)</option>
-                    <option value="Shaving">Shaving (दाढ़ी बनाना)</option>
-                    <option value="Hair Color">Hair Color (कलर)</option>
-                </select>
-                <br>
-                <button type="submit" class="book-btn">Confirm & Book Slot</button>
-            </div>
-        </form>
+        <div class="seat-box">
+            <strong>Chair 1</strong>
+            {% if bookings[slot] is defined and bookings[slot]['Chair 1'] is defined %}
+                <span class="status-booked">👤 Booked</span>
+            {% else %}
+                <form action="/book" method="POST">
+                    <input type="hidden" name="time" value="{{ slot }}">
+                    <input type="hidden" name="seat" value="Chair 1">
+                    <input type="hidden" name="date" value="2026-06-15">
+                    <button type="submit" class="book-btn">Select Slot</button>
+                </form>
+            {% endif %}
+        </div>
+        
+        <div class="seat-box">
+            <strong>Chair 2</strong>
+            {% if bookings[slot] is defined and bookings[slot]['Chair 2'] is defined %}
+                <span class="status-booked">👤 Booked</span>
+            {% else %}
+                <form action="/book" method="POST">
+                    <input type="hidden" name="time" value="{{ slot }}">
+                    <input type="hidden" name="seat" value="Chair 2">
+                    <input type="hidden" name="date" value="2026-06-15">
+                    <button type="submit" class="book-btn">Select Slot</button>
+                </form>
+            {% endif %}
+        </div>
     </div>
     {% endfor %}
 </div>
