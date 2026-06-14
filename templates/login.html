@@ -1,39 +1,24 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <title>Barber Shop - Login</title>
+    <title>Customer Login</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
-        body { font-family: Arial, sans-serif; background-color: #1a1a1a; color: #fff; padding: 20px; }
-        .login-box { max-width: 400px; margin: 60px auto; background: #2d2d2d; padding: 30px; border-radius: 10px; border: 2px solid #ffcc00; box-shadow: 0 4px 10px rgba(0,0,0,0.5); }
-        h2 { text-align: center; color: #ffcc00; margin-bottom: 25px; }
-        label { display: block; margin-bottom: 8px; font-weight: bold; color: #ccc; }
-        input { width: 94%; padding: 10px; margin-bottom: 20px; border-radius: 5px; border: 1px solid #444; background: #1a1a1a; color: white; font-size: 15px; }
-        input:focus { border-color: #ffcc00; outline: none; }
-        .btn-submit { width: 100%; background: #ffcc00; color: black; font-weight: bold; padding: 12px; font-size: 16px; border: none; border-radius: 5px; cursor: pointer; }
-        .btn-submit:hover { background: #fff; }
+        body { font-family: Arial, sans-serif; background: #f4f4f4; text-align: center; padding-top: 50px; }
+        .box { background: white; padding: 30px; display: inline-block; border-radius: 10px; box-shadow: 0 0 10px rgba(0,0,0,0.1); width: 85%; max-width: 400px; }
+        input { width: 90%; padding: 10px; margin: 10px 0; border: 1px solid #ccc; border-radius: 5px; }
+        button { background: #007bff; color: white; border: none; padding: 10px 20px; font-size: 16px; border-radius: 5px; cursor: pointer; width: 95%; }
     </style>
 </head>
 <body>
-
-<div class="login-box">
-    <h2>✂️ Login to Book Slot</h2>
-    <form method="POST" action="/">
-        <label>👤 Full Name:</label>
-        <input type="text" name="name" placeholder="Enter your name" required>
-
-        <label>🎂 Age:</label>
-        <input type="number" name="age" placeholder="Enter your age" required>
-
-        <label>📞 Mobile Number:</label>
-        <input type="text" name="phone" placeholder="Enter 10-digit number" required>
-
-        <label>🔄 Confirm Mobile Number:</label>
-        <input type="text" name="confirm_phone" placeholder="Re-enter mobile number" required>
-
-        <button type="submit" class="btn-submit">Proceed to Booking →</button>
-    </form>
-</div>
-
+    <div class="box">
+        <h2>Customer Login 🔐</h2>
+        <form method="POST">
+            <input type="number" name="phone" placeholder="Enter Mobile Number" required><br>
+            <input type="password" name="password" placeholder="Enter Password" required><br>
+            <button type="submit">Login</button>
+        </form>
+        <p>New user? <a href="/signup">Create an Account</a></p>
+    </div>
 </body>
 </html>
