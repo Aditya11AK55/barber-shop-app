@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Super Admin Dashboard</title>
+    <style>
+        body { font-family: Arial, sans-serif; background: #1e1e2e; color: white; padding: 20px; }
+        .card { background: #2b2b3c; padding: 20px; border-radius: 10px; margin-bottom: 20px; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; background: #32324d; }
+        th, td { padding: 12px; border: 1px solid #444; text-align: left; }
+        th { background: #5865f2; }
+        .badge { background: #28a745; padding: 5px 10px; border-radius: 5px; font-size: 20px; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <h1>🚀 Welcome Aditya (Super Admin Dashboard)</h1>
+    <hr>
+    
+    <div class="card">
+        <h3>📊 Total Registered Accounts on this Platform:</h3>
+        <span class="badge">{{ total }} Active Accounts</span>
+    </div>
+
+    <div class="card">
+        <h3>👥 Database Users List (All Customer Accounts)</h3>
+        <table>
+            <tr>
+                <th>User ID</th>
+                <th>Full Name</th>
+                <th>Mobile Number</th>
+                <th>Age</th>
+            </tr>
+            {% for user in users %}
+            <tr>
+                <td>{{ user[0] }}</td>
+                <td>{{ user[1] }}</td>
+                <td>{{ user[2] }}</td>
+                <td>{{ user[3] }}</td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+    <br>
+    <a href="/logout" style="color: #ff4757; text-decoration: none; font-weight: bold;">[← Secure Logout]</a>
+</body>
+</html>
