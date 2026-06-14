@@ -7,13 +7,12 @@
     <style>
         body { font-family: Arial, sans-serif; background-color: #1a1a1a; color: #fff; padding: 15px; margin: 0; }
         
-        /* 📱 ऊपर वाले बॉक्स को और बड़ा, लंबा और शानदार बनाने के लिए CSS */
         .header { 
             background: #2d2d2d; 
-            padding: 35px 25px; /* अंदर की जगह बढ़ाकर बॉक्स को लंबा और बड़ा किया */
+            padding: 35px 25px; 
             border-radius: 12px; 
             margin-bottom: 20px; 
-            border: 2px solid #ffcc00; /* बॉर्डर को थोड़ा और चमकीला किया */
+            border: 2px solid #ffcc00; 
             display: flex;
             flex-direction: column; 
             gap: 25px;
@@ -29,7 +28,6 @@
         h1 { color: #ffcc00; margin: 0; font-size: 28px; font-weight: bold; }
         .welcome-text { color: #aaa; margin: 10px 0 0 0; font-size: 16px; }
         
-        /* 🔑 बटनों को स्क्रीन पर और बड़ा और लंबा दिखाने के लिए CSS */
         .auth-box { display: flex; flex-direction: column; gap: 15px; width: 100%; max-width: 320px; }
         @media(min-width: 600px) {
             .auth-box { flex-direction: row; max-width: none; width: auto; }
@@ -39,8 +37,35 @@
         .signup-btn { background: #ffcc00; color: black; border-color: #ffcc00; }
         .logout-btn { background: #ff4757; color: white; padding: 12px 30px; font-weight: bold; text-decoration: none; border-radius: 6px; font-size: 16px; text-align: center; display: block; width: 100%; box-sizing: border-box; }
         
-        /* बाकी बचे हुए पेजों की CSS */
-        .date-filter-box { background: #2d2d2d; padding: 15px; border-radius: 8px; margin-bottom: 20px; border: 1px solid #ffcc00; display: flex; justify-content: space-between; align-items: center; font-size: 14px; }
+        /* 📅 ग्रीन बॉक्स की जगह नया रिस्पॉन्सिव फ़िल्टर बॉक्स */
+        .date-filter-box { 
+            background: #2d2d2d; 
+            padding: 20px; 
+            border-radius: 10px; 
+            margin-bottom: 25px; 
+            border: 1px solid #ffcc00; 
+            display: flex; 
+            flex-direction: column;
+            gap: 15px;
+            align-items: center;
+        }
+        @media(min-width: 600px) {
+            .date-filter-box { flex-direction: row; justify-content: space-between; }
+        }
+
+        /* 🗓️ डेट सिलेक्ट करने वाला इनपुट डिज़ाइन */
+        .date-picker-input {
+            background: #1a1a1a;
+            color: #ffcc00;
+            border: 2px solid #ffcc00;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: bold;
+            outline: none;
+            cursor: pointer;
+        }
+
         .grid-container { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; }
         .slot-card { background: #2d2d2d; border-radius: 8px; padding: 15px; border-left: 5px solid #ffcc00; box-shadow: 0 4px 6px rgba(0,0,0,0.3); }
         .seat-box { background: #383838; padding: 12px; border-radius: 5px; margin-top: 10px; text-align: center; }
@@ -82,26 +107,33 @@
 {% if logged_in %}
     
     <div class="date-filter-box">
-        <div>
-            <span style="font-size: 14px; font-weight: bold; color: #ffcc00;">📅 Date: 2026-06-15</span>
-        </div>
-        <div style="color: #aaa;">Support: <strong style="color: #2ecc71;">{{ owner_phone }}</strong></div>
+        <form method="GET" action="/" style="margin: 0; display: flex; align-items: center; gap: 10px; flex-wrap: wrap; justify-content: center;">
+            <label for="booking_date" style="font-weight: bold; color: #ffcc00; font-size: 16px;">Select Date:</label>
+            <input type="date" id="booking_date" name="date" class="date-picker-input" value="{{ selected_date }}" onchange="this.form.submit()">
+        </form>
+        <div style="color: #aaa; font-size: 15px;">Support: <strong style="color: #2ecc71;">{{ owner_phone }}</strong></div>
     </div>
 
     <div class="grid-container">
-        {% for slot in slots %}
+        {% set full_day_slots = [
+            '08:30 AM', '09:20 AM', '10:10 AM', '11:00 AM', '11:50 AM', 
+            '12:40 PM', '01:30 PM', '02:20 PM', '03:10 PM', '04:00 PM', 
+            '04:50 PM', '05:40 PM', '06:30 PM', '07:20 PM', '08:10 PM'
+        ] %}
+        
+        {% for slot in full_day_slots %}
         <div class="slot-card">
             <span style="font-size: 16px; font-weight: bold; color: #ffcc00;">⏰ {{ slot }}</span>
             
             <div class="seat-box">
                 <span style="display: block; margin-bottom: 5px; font-weight: bold;">Chair 1</span>
                 {% if bookings[slot] is defined and bookings[slot]['Chair 1'] is defined %}
-                    <span class="status-booked">👤 Booked</span>
+                    <span class="status-booked">👤 Booked ({{ bookings[slot]['Chair 1'] }})</span>
                 {% else %}
                     <form action="/book" method="POST" style="margin: 0;">
                         <input type="hidden" name="time" value="{{ slot }}">
                         <input type="hidden" name="seat" value="Chair 1">
-                        <input type="hidden" name="date" value="2026-06-15">
+                        <input type="hidden" name="date" value="{{ selected_date }}">
                         <button type="submit" class="book-btn">Select Slot</button>
                     </form>
                 {% endif %}
@@ -110,12 +142,12 @@
             <div class="seat-box">
                 <span style="display: block; margin-bottom: 5px; font-weight: bold;">Chair 2</span>
                 {% if bookings[slot] is defined and bookings[slot]['Chair 2'] is defined %}
-                    <span class="status-booked">👤 Booked</span>
+                    <span class="status-booked">👤 Booked ({{ bookings[slot]['Chair 2'] }})</span>
                 {% else %}
                     <form action="/book" method="POST" style="margin: 0;">
                         <input type="hidden" name="time" value="{{ slot }}">
                         <input type="hidden" name="seat" value="Chair 2">
-                        <input type="hidden" name="date" value="2026-06-15">
+                        <input type="hidden" name="date" value="{{ selected_date }}">
                         <button type="submit" class="book-btn">Select Slot</button>
                     </form>
                 {% endif %}
@@ -123,6 +155,31 @@
         </div>
         {% endfor %}
     </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            var dateInput = document.getElementById("booking_date");
+            var today = new Date();
+            
+            // Format today's date as YYYY-MM-DD
+            var yyyy = today.getFullYear();
+            var mm = String(today.getMonth() + 1).padStart(2, '0');
+            var dd = String(today.getDate()).padStart(2, '0');
+            var minDate = yyyy + '-' + mm + '-' + dd;
+            
+            // Calculate max date (30 days ahead)
+            var maxTarget = new Date();
+            maxTarget.setDate(today.getDate() + 30);
+            var max_yyyy = maxTarget.getFullYear();
+            var max_mm = String(maxTarget.getMonth() + 1).padStart(2, '0');
+            var max_dd = String(maxTarget.getDate()).padStart(2, '0');
+            var maxDate = max_yyyy + '-' + max_mm + '-' + max_max_dd;
+            
+            // Set attributes to prevent backward or long-term selection
+            dateInput.setAttribute("min", minDate);
+            dateInput.setAttribute("max", maxDate);
+        });
+    </script>
 
 {% endif %}
 
