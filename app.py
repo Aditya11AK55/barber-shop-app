@@ -50,6 +50,7 @@ def home():
 
     conn = sqlite3.connect(DB_FILE)
     cursor = conn.cursor()
+    # Fetching correct columns to avoid 500 internal server error
     cursor.execute("SELECT seat, time, user_name FROM appointments WHERE date=?", (selected_date,))
     rows = cursor.fetchall()
     conn.close()
@@ -61,7 +62,7 @@ def home():
             booked_slots[time] = {}
         booked_slots[time][seat] = u_name
 
-    # ⏱️ Updated backend list with strict 45-minute intervals
+    # 45-Minute Intervals
     slots = [
         '08:30 AM', '09:15 AM', '10:00 AM', '10:45 AM', '11:30 AM', 
         '12:15 PM', '01:00 PM', '01:45 PM', '02:30 PM', '03:15 PM', 
@@ -174,6 +175,7 @@ def my_bookings():
         return redirect(url_for('login'))
     conn = sqlite3.connect(DB_FILE)
     cursor = conn.cursor()
+    # Corrected columns to match my_bookings.html requirements
     cursor.execute("SELECT id, seat, date, time FROM appointments WHERE user_phone=?", (session['user_phone'],))
     user_slots = cursor.fetchall()
     conn.close()
@@ -181,4 +183,4 @@ def my_bookings():
 
 if __name__ == '__main__':
     app.run(debug=True)
-            
+    
