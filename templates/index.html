@@ -5,18 +5,41 @@
     <title>Barber Shop - Schedule</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
-        body { font-family: Arial, sans-serif; background-color: #1a1a1a; color: #fff; padding: 20px; }
-        .header { display: flex; justify-content: space-between; align-items: center; background: #2d2d2d; padding: 15px 30px; border-radius: 10px; margin-bottom: 20px; border: 1px solid #444; }
+        body { font-family: Arial, sans-serif; background-color: #1a1a1a; color: #fff; padding: 15px; margin: 0; }
+        
+        /* 📱 मोबाइल के लिए बिल्कुल नया और सुरक्षित हेडर डिजाइन */
+        .header { 
+            background: #2d2d2d; 
+            padding: 20px; 
+            border-radius: 10px; 
+            margin-bottom: 20px; 
+            border: 1px solid #444; 
+            display: flex;
+            flex-direction: column; /* बटन को एक दूसरे के ऊपर चढ़ने से रोकेगा */
+            gap: 15px;
+        }
+        
+        @media(min-width: 600px) {
+            .header { flex-direction: row; justify-content: space-between; align-items: center; }
+        }
+
         h1 { color: #ffcc00; margin: 0; font-size: 24px; }
-        .date-filter-box { background: #2d2d2d; padding: 15px; border-radius: 8px; text-align: center; margin-bottom: 20px; border: 1px solid #ffcc00; display: flex; justify-content: space-between; align-items: center; }
+        
+        /* बटन बॉक्स जहाँ लॉगिन और साइनअप हैं */
+        .auth-box { display: flex; gap: 10px; flex-wrap: wrap; }
+        
+        .date-filter-box { background: #2d2d2d; padding: 15px; border-radius: 8px; margin-bottom: 20px; border: 1px solid #ffcc00; display: flex; justify-content: space-between; align-items: center; font-size: 14px; }
         .grid-container { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; }
         .slot-card { background: #2d2d2d; border-radius: 8px; padding: 15px; border-left: 5px solid #ffcc00; box-shadow: 0 4px 6px rgba(0,0,0,0.3); }
-        .seat-box { background: #383838; padding: 10px; border-radius: 5px; margin-top: 10px; text-align: center; }
-        .book-btn { background: #ffcc00; color: #000; padding: 6px 12px; font-weight: bold; border-radius: 4px; text-decoration: none; display: inline-block; margin-top: 5px; font-size: 13px; border: none; cursor: pointer; }
+        .seat-box { background: #383838; padding: 12px; border-radius: 5px; margin-top: 10px; text-align: center; }
+        
+        /* 🔔 बटनों की बिल्कुल साफ कोडिंग */
+        .book-btn { background: #ffcc00; color: #000; padding: 8px 15px; font-weight: bold; border-radius: 4px; text-decoration: none; display: inline-block; margin-top: 5px; font-size: 13px; border: none; cursor: pointer; width: 100%; max-width: 150px; }
+        .auth-btn { background: #383838; color: #ffcc00; border: 1px solid #ffcc00; padding: 8px 16px; font-weight: bold; text-decoration: none; border-radius: 5px; font-size: 14px; text-align: center; display: inline-block; }
+        .logout-btn { background: #ff4757; color: white; padding: 8px 16px; font-weight: bold; text-decoration: none; border-radius: 5px; font-size: 14px; text-align: center; display: inline-block; }
+        
         .status-booked { color: #e74c3c; font-size: 13px; font-weight: bold; display: block; margin-top: 5px; }
-        .auth-btn { background: #383838; color: #ffcc00; border: 1px solid #ffcc00; padding: 8px 15px; font-weight: bold; text-decoration: none; border-radius: 5px; margin-left: 10px; font-size: 14px; }
-        .logout-btn { background: #ff4757; color: white; padding: 8px 15px; font-weight: bold; text-decoration: none; border-radius: 5px; margin-left: 10px; font-size: 14px; }
-        .flash-msg { background: #28a745; color: white; padding: 10px; margin-bottom: 20px; border-radius: 5px; text-align: center; font-weight: bold; }
+        .flash-msg { background: #28a745; color: white; padding: 12px; margin-bottom: 20px; border-radius: 5px; text-align: center; font-weight: bold; font-size: 14px; }
     </style>
 </head>
 <body>
@@ -24,7 +47,7 @@
 {% with messages = get_flashed_messages() %}
   {% if messages %}
     {% for message in messages %}
-      <div class="flash-msg">🌟 {{ message }}</div>
+      <div class="flash-msg">⭐ {{ message }}</div>
     {% endfor %}
   {% endif %}
 {% endwith %}
@@ -33,26 +56,27 @@
     <div>
         <h1>✂️ Appointment Schedule</h1>
         {% if logged_in %}
-            <p style="color: #2ecc71; margin: 5px 0 0 0;">Welcome back, <strong>{{ name }}</strong>!</p>
+            <p style="color: #2ecc71; margin: 5px 0 0 0; font-size: 15px;">Welcome back, <strong>{{ name }}</strong>!</p>
         {% else %}
-            <p style="color: #aaa; margin: 5px 0 0 0;">Welcome, Guest! Please login to book slots.</p>
+            <p style="color: #aaa; margin: 5px 0 0 0; font-size: 14px;">Welcome, Guest! Please login to book slots.</p>
         {% endif %}
     </div>
-    <div>
+    
+    <div class="auth-box">
         {% if logged_in %}
             <a href="/logout" class="logout-btn">🚪 Logout</a>
         {% else %}
             <a href="/login" class="auth-btn">🔐 Login</a>
-            <a href="/signup" class="auth-btn" style="background: #ffcc00; color: black;">📝 Sign Up</a>
+            <a href="/signup" class="auth-btn" style="background: #ffcc00; color: black; border-color: #ffcc00;">📝 Sign Up</a>
         {% endif %}
     </div>
 </div>
 
 <div class="date-filter-box">
     <div>
-        <span style="font-size: 16px; font-weight: bold; color: #ffcc00;">📅 Date: 2026-06-15</span>
+        <span style="font-size: 14px; font-weight: bold; color: #ffcc00;">📅 Date: 2026-06-15</span>
     </div>
-    <div style="font-size: 14px; color: #aaa;">Shop Support: <strong style="color: #2ecc71;">{{ owner_phone }}</strong></div>
+    <div style="color: #aaa;">Support: <strong style="color: #2ecc71;">{{ owner_phone }}</strong></div>
 </div>
 
 <div class="grid-container">
@@ -61,11 +85,11 @@
         <span style="font-size: 16px; font-weight: bold; color: #ffcc00;">⏰ {{ slot }}</span>
         
         <div class="seat-box">
-            <strong>Chair 1</strong>
+            <span style="display: block; margin-bottom: 5px; font-weight: bold;">Chair 1</span>
             {% if bookings[slot] is defined and bookings[slot]['Chair 1'] is defined %}
                 <span class="status-booked">👤 Booked</span>
             {% else %}
-                <form action="/book" method="POST">
+                <form action="/book" method="POST" style="margin: 0;">
                     <input type="hidden" name="time" value="{{ slot }}">
                     <input type="hidden" name="seat" value="Chair 1">
                     <input type="hidden" name="date" value="2026-06-15">
@@ -75,11 +99,11 @@
         </div>
         
         <div class="seat-box">
-            <strong>Chair 2</strong>
+            <span style="display: block; margin-bottom: 5px; font-weight: bold;">Chair 2</span>
             {% if bookings[slot] is defined and bookings[slot]['Chair 2'] is defined %}
                 <span class="status-booked">👤 Booked</span>
             {% else %}
-                <form action="/book" method="POST">
+                <form action="/book" method="POST" style="margin: 0;">
                     <input type="hidden" name="time" value="{{ slot }}">
                     <input type="hidden" name="seat" value="Chair 2">
                     <input type="hidden" name="date" value="2026-06-15">
@@ -92,4 +116,5 @@
 </div>
 
 </body>
-</html>
+    </html>
+    
