@@ -3,11 +3,13 @@ from flask import Flask, render_template, request, redirect, url_for, session, f
 from werkzeug.security import generate_password_hash, check_password_hash
 import sqlite3
 from datetime import datetime
+import pytz  # Strict Indian Timezone Fix
 
 app = Flask(__name__)
 app.secret_key = "super_secret_aditya_key_2026"
 
-DB_FILE = "barber_shop.db"
+# Keeping it synced with the current database structure
+DB_FILE = "barber_shop_v2.db"
 
 OWNER_DETAILS = {
     "name": "Aditya Kumhar",
@@ -44,13 +46,16 @@ init_db()
 
 @app.route('/')
 def home():
+    # 🌍 Fixing the Date Issue: Forcing Asia/Kolkata Timezone so it never shows yesterday's date
+    IST = pytz.timezone('Asia/Kolkata')
+    current_date_ist = datetime.now(IST).strftime('%Y-%m-%d')
+    
     selected_date = request.args.get('date')
     if not selected_date:
-        selected_date = datetime.now().strftime('%Y-%m-%d')
+        selected_date = current_date_ist
 
     conn = sqlite3.connect(DB_FILE)
     cursor = conn.cursor()
-    # Fetching correct columns to avoid 500 internal server error
     cursor.execute("SELECT seat, time, user_name FROM appointments WHERE date=?", (selected_date,))
     rows = cursor.fetchall()
     conn.close()
@@ -62,7 +67,7 @@ def home():
             booked_slots[time] = {}
         booked_slots[time][seat] = u_name
 
-    # 45-Minute Intervals
+    # Exact 45-Minute Intervals
     slots = [
         '08:30 AM', '09:15 AM', '10:00 AM', '10:45 AM', '11:30 AM', 
         '12:15 PM', '01:00 PM', '01:45 PM', '02:30 PM', '03:15 PM', 
@@ -175,11 +180,36 @@ def my_bookings():
         return redirect(url_for('login'))
     conn = sqlite3.connect(DB_FILE)
     cursor = conn.cursor()
-    # Corrected columns to match my_bookings.html requirements
     cursor.execute("SELECT id, seat, date, time FROM appointments WHERE user_phone=?", (session['user_phone'],))
     user_slots = cursor.fetchall()
     conn.close()
     return render_template('my_bookings.html', bookings=user_slots)
+
+# 🔐 Admin route re-verified and locked for perfect routing
+@app.route('/admin', methods=['GET', 'POST'])
+def admin_verify():
+    if request.method == 'POST':
+        name = request.form.get('name')
+        phone = request.form.get('phone')
+        dob = request.form.get('dob')
+        
+        if name == OWNER_DETAILS['name'] and phone == OWNER_DETAILS['phone'] and dob == OWNER_DETAILS['dob']:
+            session['owner_logged_in'] = True
+            return redirect(url_for('owner_dashboard'))
+        else:
+            flash("Invalid Owner Credentials! Access Denied.", "danger")
+    return render_template('admin_login.html')
+
+@app.route('/owner-dashboard')
+def owner_dashboard():
+    if not session.get('owner_logged_in'):
+        return redirect(url_for('admin_verify'))
+    conn = sqlite3.connect(DB_FILE)
+    cursor = conn.cursor()
+    cursor.execute("SELECT id, user_name, user_phone, seat, date, time FROM appointments")
+    bookings = cursor.fetchall()
+    conn.close()
+    return render_template('owner_dashboard.html', bookings=bookings)
 
 if __name__ == '__main__':
     app.run(debug=True)
