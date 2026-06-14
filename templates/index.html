@@ -28,7 +28,6 @@
         h1 { color: #ffcc00; margin: 0; font-size: 28px; font-weight: bold; }
         .welcome-text { color: #aaa; margin: 10px 0 0 0; font-size: 16px; }
         
-        /* Buttons Layout */
         .auth-box { display: flex; flex-direction: column; gap: 15px; width: 100%; max-width: 320px; }
         @media(min-width: 600px) {
             .auth-box { flex-direction: row; max-width: none; width: auto; }
@@ -70,7 +69,7 @@
         .slot-card { background: #2d2d2d; border-radius: 8px; padding: 15px; border-left: 5px solid #ffcc00; box-shadow: 0 4px 6px rgba(0,0,0,0.3); }
         .seat-box { background: #383838; padding: 12px; border-radius: 5px; margin-top: 10px; text-align: center; }
         .book-btn { background: #ffcc00; color: #000; padding: 8px 15px; font-weight: bold; border-radius: 4px; text-decoration: none; display: inline-block; margin-top: 5px; font-size: 13px; border: none; cursor: pointer; width: 100%; max-width: 150px; }
-        .status-booked { color: #e74c3c; font-size: 13px; font-weight: bold; display: block; margin-top: 5px; }
+        .status-booked { color: #ff4757; font-size: 13px; font-weight: bold; display: block; margin-top: 5px; }
         .flash-msg { background: #28a745; color: white; padding: 12px; margin-bottom: 20px; border-radius: 5px; text-align: center; font-weight: bold; font-size: 14px; }
     </style>
 </head>
@@ -117,9 +116,9 @@
 
     <div class="grid-container">
         {% set full_day_slots = [
-            '08:30 AM', '09:20 AM', '10:10 AM', '11:00 AM', '11:50 AM', 
-            '12:40 PM', '01:30 PM', '02:20 PM', '03:10 PM', '04:00 PM', 
-            '04:50 PM', '05:40 PM', '06:30 PM', '07:20 PM', '08:10 PM'
+            '08:30 AM', '09:15 AM', '10:00 AM', '10:45 AM', '11:30 AM', 
+            '12:15 PM', '01:00 PM', '01:45 PM', '02:30 PM', '03:15 PM', 
+            '04:00 PM', '04:45 PM', '05:30 PM', '06:15 PM', '07:00 PM', '07:45 PM'
         ] %}
         
         {% for slot in full_day_slots %}
