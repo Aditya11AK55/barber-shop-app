@@ -7,7 +7,6 @@
     <style>
         body { font-family: Arial, sans-serif; background-color: #1a1a1a; color: #fff; padding: 15px; margin: 0; }
         
-        /* 📱 मोबाइल के लिए बिल्कुल नया और सुरक्षित हेडर डिजाइन */
         .header { 
             background: #2d2d2d; 
             padding: 20px; 
@@ -15,7 +14,7 @@
             margin-bottom: 20px; 
             border: 1px solid #444; 
             display: flex;
-            flex-direction: column; /* बटन को एक दूसरे के ऊपर चढ़ने से रोकेगा */
+            flex-direction: column; 
             gap: 15px;
         }
         
@@ -24,8 +23,6 @@
         }
 
         h1 { color: #ffcc00; margin: 0; font-size: 24px; }
-        
-        /* बटन बॉक्स जहाँ लॉगिन और साइनअप हैं */
         .auth-box { display: flex; gap: 10px; flex-wrap: wrap; }
         
         .date-filter-box { background: #2d2d2d; padding: 15px; border-radius: 8px; margin-bottom: 20px; border: 1px solid #ffcc00; display: flex; justify-content: space-between; align-items: center; font-size: 14px; }
@@ -33,13 +30,15 @@
         .slot-card { background: #2d2d2d; border-radius: 8px; padding: 15px; border-left: 5px solid #ffcc00; box-shadow: 0 4px 6px rgba(0,0,0,0.3); }
         .seat-box { background: #383838; padding: 12px; border-radius: 5px; margin-top: 10px; text-align: center; }
         
-        /* 🔔 बटनों की बिल्कुल साफ कोडिंग */
         .book-btn { background: #ffcc00; color: #000; padding: 8px 15px; font-weight: bold; border-radius: 4px; text-decoration: none; display: inline-block; margin-top: 5px; font-size: 13px; border: none; cursor: pointer; width: 100%; max-width: 150px; }
         .auth-btn { background: #383838; color: #ffcc00; border: 1px solid #ffcc00; padding: 8px 16px; font-weight: bold; text-decoration: none; border-radius: 5px; font-size: 14px; text-align: center; display: inline-block; }
         .logout-btn { background: #ff4757; color: white; padding: 8px 16px; font-weight: bold; text-decoration: none; border-radius: 5px; font-size: 14px; text-align: center; display: inline-block; }
         
         .status-booked { color: #e74c3c; font-size: 13px; font-weight: bold; display: block; margin-top: 5px; }
         .flash-msg { background: #28a745; color: white; padding: 12px; margin-bottom: 20px; border-radius: 5px; text-align: center; font-weight: bold; font-size: 14px; }
+        
+        /* लॉगिन न होने पर दिखने वाला सुंदर बॉक्स */
+        .login-alert-box { background: #2d2d2d; padding: 40px 20px; border-radius: 10px; text-align: center; border: 1px dashed #ffcc00; margin-top: 20px; }
     </style>
 </head>
 <body>
@@ -72,48 +71,60 @@
     </div>
 </div>
 
-<div class="date-filter-box">
-    <div>
-        <span style="font-size: 14px; font-weight: bold; color: #ffcc00;">📅 Date: 2026-06-15</span>
+{% if logged_in %}
+    
+    <div class="date-filter-box">
+        <div>
+            <span style="font-size: 14px; font-weight: bold; color: #ffcc00;">📅 Date: 2026-06-15</span>
+        </div>
+        <div style="color: #aaa;">Support: <strong style="color: #2ecc71;">{{ owner_phone }}</strong></div>
     </div>
-    <div style="color: #aaa;">Support: <strong style="color: #2ecc71;">{{ owner_phone }}</strong></div>
-</div>
 
-<div class="grid-container">
-    {% for slot in slots %}
-    <div class="slot-card">
-        <span style="font-size: 16px; font-weight: bold; color: #ffcc00;">⏰ {{ slot }}</span>
-        
-        <div class="seat-box">
-            <span style="display: block; margin-bottom: 5px; font-weight: bold;">Chair 1</span>
-            {% if bookings[slot] is defined and bookings[slot]['Chair 1'] is defined %}
-                <span class="status-booked">👤 Booked</span>
-            {% else %}
-                <form action="/book" method="POST" style="margin: 0;">
-                    <input type="hidden" name="time" value="{{ slot }}">
-                    <input type="hidden" name="seat" value="Chair 1">
-                    <input type="hidden" name="date" value="2026-06-15">
-                    <button type="submit" class="book-btn">Select Slot</button>
-                </form>
-            {% endif %}
+    <div class="grid-container">
+        {% for slot in slots %}
+        <div class="slot-card">
+            <span style="font-size: 16px; font-weight: bold; color: #ffcc00;">⏰ {{ slot }}</span>
+            
+            <div class="seat-box">
+                <span style="display: block; margin-bottom: 5px; font-weight: bold;">Chair 1</span>
+                {% if bookings[slot] is defined and bookings[slot]['Chair 1'] is defined %}
+                    <span class="status-booked">👤 Booked</span>
+                {% else %}
+                    <form action="/book" method="POST" style="margin: 0;">
+                        <input type="hidden" name="time" value="{{ slot }}">
+                        <input type="hidden" name="seat" value="Chair 1">
+                        <input type="hidden" name="date" value="2026-06-15">
+                        <button type="submit" class="book-btn">Select Slot</button>
+                    </form>
+                {% endif %}
+            </div>
+            
+            <div class="seat-box">
+                <span style="display: block; margin-bottom: 5px; font-weight: bold;">Chair 2</span>
+                {% if bookings[slot] is defined and bookings[slot]['Chair 2'] is defined %}
+                    <span class="status-booked">👤 Booked</span>
+                {% else %}
+                    <form action="/book" method="POST" style="margin: 0;">
+                        <input type="hidden" name="time" value="{{ slot }}">
+                        <input type="hidden" name="seat" value="Chair 2">
+                        <input type="hidden" name="date" value="2026-06-15">
+                        <button type="submit" class="book-btn">Select Slot</button>
+                    </form>
+                {% endif %}
+            </div>
         </div>
-        
-        <div class="seat-box">
-            <span style="display: block; margin-bottom: 5px; font-weight: bold;">Chair 2</span>
-            {% if bookings[slot] is defined and bookings[slot]['Chair 2'] is defined %}
-                <span class="status-booked">👤 Booked</span>
-            {% else %}
-                <form action="/book" method="POST" style="margin: 0;">
-                    <input type="hidden" name="time" value="{{ slot }}">
-                    <input type="hidden" name="seat" value="Chair 2">
-                    <input type="hidden" name="date" value="2026-06-15">
-                    <button type="submit" class="book-btn">Select Slot</button>
-                </form>
-            {% endif %}
-        </div>
+        {% endfor %}
     </div>
-    {% endfor %}
-</div>
+
+{% else %}
+    
+    <div class="login-alert-box">
+        <h3 style="color: #ffcc00; margin: 0 0 10px 0;">🔒 Slots are Locked!</h3>
+        <p style="color: #ccc; margin: 0 0 20px 0; font-size: 15px;">अपॉइंटमेंट स्लॉट देखने और बुक करने के लिए कृपया पहले अपने अकाउंट में लॉगिन करें।</p>
+        <a href="/login" class="auth-btn" style="background: #ffcc00; color: black; border-color: #ffcc00;">🔐 Click Here to Login</a>
+    </div>
+
+{% endif %}
 
 </body>
     </html>
