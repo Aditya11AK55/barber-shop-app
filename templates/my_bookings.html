@@ -2,40 +2,41 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>My Booking History</title>
+    <title>My Bookings</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
-        body { font-family: Arial, sans-serif; background-color: #1a1a1a; color: #fff; padding: 20px; }
-        .container { max-width: 600px; margin: 40px auto; background: #2d2d2d; padding: 30px; border-radius: 10px; text-align: center; border: 1px solid #444; box-shadow: 0px 4px 15px rgba(0,0,0,0.5); }
-        h2 { color: #ffcc00; margin-bottom: 10px; }
-        .user-badge { color: #aaa; margin-bottom: 25px; font-size: 14px; }
-        .booking-card { background: #383838; padding: 15px 20px; border-radius: 8px; margin: 15px 0; border-left: 6px solid #2ecc71; text-align: left; display: flex; justify-content: space-between; align-items: center; }
-        .booking-details { font-size: 16px; line-height: 1.6; }
+        body { font-family: Arial, sans-serif; background-color: #1a1a1a; color: #fff; padding: 20px; margin: 0; }
+        .container { max-width: 600px; margin: 0 auto; }
+        h2 { color: #ffcc00; text-align: center; margin-bottom: 25px; font-size: 24px; }
+        .booking-card { background: #2d2d2d; padding: 15px; border-radius: 8px; margin-bottom: 15px; border-left: 5px solid #2ecc71; box-shadow: 0 4px 6px rgba(0,0,0,0.3); }
+        .booking-details { font-size: 15px; line-height: 1.6; }
         .booking-details strong { color: #ffcc00; }
-        .back-btn { display: inline-block; background: #ffcc00; color: black; padding: 12px 24px; font-weight: bold; text-decoration: none; border-radius: 5px; margin-top: 20px; font-size: 15px; }
-        .success-tag { background: rgba(46, 204, 113, 0.2); color: #2ecc71; padding: 6px 12px; border-radius: 20px; font-weight: bold; font-size: 13px; border: 1px solid #2ecc71; }
+        .back-btn { display: block; width: 100%; max-width: 200px; margin: 25px auto; background: #383838; color: #ffcc00; border: 2px solid #ffcc00; padding: 12px; border-radius: 6px; text-decoration: none; text-align: center; font-weight: bold; font-size: 16px; }
+        .no-booking { text-align: center; color: #aaa; margin-top: 40px; font-size: 16px; }
     </style>
 </head>
 <body>
-<div class="container">
-    <h2>📋 Your Booking History</h2>
-    <div class="user-badge">Logged in as: <strong>{{ user.name }}</strong> (📞 {{ user.phone }})</div>
 
-    {% if user_slots %}
-        {% for b in user_slots %}
+<div class="container">
+    <h2>📅 Your Booked Appointments</h2>
+    
+    {% if bookings %}
+        {% for booking in bookings %}
         <div class="booking-card">
             <div class="booking-details">
-                📅 <strong>Date:</strong> <span style="font-size: 17px; color: #fff; background: #1a1a1a; padding: 2px 8px; border-radius: 4px; border: 1px solid #ffcc00;">{{ b.date }}</span> <br>
-                🕒 <strong>Time Slot:</strong> {{ b.slot }} <br>
-                🪑 <strong>Assigned Chair:</strong> {{ b.seat }}
+                <div><strong>Appointment ID:</strong> #{{ booking[0] }}</div>
+                <div><strong>Assigned Chair:</strong> {{ booking[1] }}</div>
+                <div><strong>Selected Date:</strong> {{ booking[2] }}</div>
+                <div><strong>Selected Time:</strong> {{ booking[3] }}</div>
             </div>
-            <span class="success-tag">✓ Confirmed</span>
         </div>
         {% endfor %}
     {% else %}
-        <p style="color: #aaa; margin: 40px 0; font-style: italic;">You haven't booked any appointments yet.</p>
+        <p class="no-booking">You haven't booked any appointments yet.</p>
     {% endif %}
     
-    <a href="/booking" class="back-btn">← Go Back to Schedule</a>
+    <a href="/" class="back-btn">⬅ Back to Schedule</a>
 </div>
+
 </body>
 </html>
