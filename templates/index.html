@@ -7,38 +7,46 @@
     <style>
         body { font-family: Arial, sans-serif; background-color: #1a1a1a; color: #fff; padding: 15px; margin: 0; }
         
+        /* 📱 ऊपर वाले बॉक्स को और बड़ा, लंबा और शानदार बनाने के लिए CSS */
         .header { 
             background: #2d2d2d; 
-            padding: 20px; 
-            border-radius: 10px; 
+            padding: 35px 25px; /* अंदर की जगह बढ़ाकर बॉक्स को लंबा और बड़ा किया */
+            border-radius: 12px; 
             margin-bottom: 20px; 
-            border: 1px solid #444; 
+            border: 2px solid #ffcc00; /* बॉर्डर को थोड़ा और चमकीला किया */
             display: flex;
             flex-direction: column; 
-            gap: 15px;
+            gap: 25px;
+            text-align: center;
+            align-items: center;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.5);
         }
         
         @media(min-width: 600px) {
-            .header { flex-direction: row; justify-content: space-between; align-items: center; }
+            .header { flex-direction: row; justify-content: space-between; text-align: left; align-items: center; padding: 40px; }
         }
 
-        h1 { color: #ffcc00; margin: 0; font-size: 24px; }
-        .auth-box { display: flex; gap: 10px; flex-wrap: wrap; }
+        h1 { color: #ffcc00; margin: 0; font-size: 28px; font-weight: bold; }
+        .welcome-text { color: #aaa; margin: 10px 0 0 0; font-size: 16px; }
         
+        /* 🔑 बटनों को स्क्रीन पर और बड़ा और लंबा दिखाने के लिए CSS */
+        .auth-box { display: flex; flex-direction: column; gap: 15px; width: 100%; max-width: 320px; }
+        @media(min-width: 600px) {
+            .auth-box { flex-direction: row; max-width: none; width: auto; }
+        }
+        
+        .auth-btn { background: #383838; color: #ffcc00; border: 2px solid #ffcc00; padding: 12px 30px; font-weight: bold; text-decoration: none; border-radius: 6px; font-size: 16px; text-align: center; display: block; width: 100%; box-sizing: border-box; }
+        .signup-btn { background: #ffcc00; color: black; border-color: #ffcc00; }
+        .logout-btn { background: #ff4757; color: white; padding: 12px 30px; font-weight: bold; text-decoration: none; border-radius: 6px; font-size: 16px; text-align: center; display: block; width: 100%; box-sizing: border-box; }
+        
+        /* बाकी बचे हुए पेजों की CSS */
         .date-filter-box { background: #2d2d2d; padding: 15px; border-radius: 8px; margin-bottom: 20px; border: 1px solid #ffcc00; display: flex; justify-content: space-between; align-items: center; font-size: 14px; }
         .grid-container { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; }
         .slot-card { background: #2d2d2d; border-radius: 8px; padding: 15px; border-left: 5px solid #ffcc00; box-shadow: 0 4px 6px rgba(0,0,0,0.3); }
         .seat-box { background: #383838; padding: 12px; border-radius: 5px; margin-top: 10px; text-align: center; }
-        
         .book-btn { background: #ffcc00; color: #000; padding: 8px 15px; font-weight: bold; border-radius: 4px; text-decoration: none; display: inline-block; margin-top: 5px; font-size: 13px; border: none; cursor: pointer; width: 100%; max-width: 150px; }
-        .auth-btn { background: #383838; color: #ffcc00; border: 1px solid #ffcc00; padding: 8px 16px; font-weight: bold; text-decoration: none; border-radius: 5px; font-size: 14px; text-align: center; display: inline-block; }
-        .logout-btn { background: #ff4757; color: white; padding: 8px 16px; font-weight: bold; text-decoration: none; border-radius: 5px; font-size: 14px; text-align: center; display: inline-block; }
-        
         .status-booked { color: #e74c3c; font-size: 13px; font-weight: bold; display: block; margin-top: 5px; }
         .flash-msg { background: #28a745; color: white; padding: 12px; margin-bottom: 20px; border-radius: 5px; text-align: center; font-weight: bold; font-size: 14px; }
-        
-        /* लॉगिन न होने पर दिखने वाला सुंदर बॉक्स */
-        .login-alert-box { background: #2d2d2d; padding: 40px 20px; border-radius: 10px; text-align: center; border: 1px dashed #ffcc00; margin-top: 20px; }
     </style>
 </head>
 <body>
@@ -46,7 +54,7 @@
 {% with messages = get_flashed_messages() %}
   {% if messages %}
     {% for message in messages %}
-      <div class="flash-msg">⭐ {{ message }}</div>
+      <div class="flash-msg">★ {{ message }}</div>
     {% endfor %}
   {% endif %}
 {% endwith %}
@@ -55,9 +63,9 @@
     <div>
         <h1>✂️ Appointment Schedule</h1>
         {% if logged_in %}
-            <p style="color: #2ecc71; margin: 5px 0 0 0; font-size: 15px;">Welcome back, <strong>{{ name }}</strong>!</p>
+            <p class="welcome-text" style="color: #2ecc71;">Welcome back, <strong>{{ name }}</strong>!</p>
         {% else %}
-            <p style="color: #aaa; margin: 5px 0 0 0; font-size: 14px;">Welcome, Guest! Please login to book slots.</p>
+            <p class="welcome-text">Welcome, Guest! Please login to book slots.</p>
         {% endif %}
     </div>
     
@@ -66,7 +74,7 @@
             <a href="/logout" class="logout-btn">🚪 Logout</a>
         {% else %}
             <a href="/login" class="auth-btn">🔐 Login</a>
-            <a href="/signup" class="auth-btn" style="background: #ffcc00; color: black; border-color: #ffcc00;">📝 Sign Up</a>
+            <a href="/signup" class="auth-btn signup-btn">📝 Sign Up</a>
         {% endif %}
     </div>
 </div>
@@ -116,16 +124,7 @@
         {% endfor %}
     </div>
 
-{% else %}
-    
-    <div class="login-alert-box">
-        <h3 style="color: #ffcc00; margin: 0 0 10px 0;">🔒 Slots are Locked!</h3>
-        <p style="color: #ccc; margin: 0 0 20px 0; font-size: 15px;">अपॉइंटमेंट स्लॉट देखने और बुक करने के लिए कृपया पहले अपने अकाउंट में लॉगिन करें।</p>
-        <a href="/login" class="auth-btn" style="background: #ffcc00; color: black; border-color: #ffcc00;">🔐 Click Here to Login</a>
-    </div>
-
 {% endif %}
 
 </body>
-    </html>
-    
+</html>
