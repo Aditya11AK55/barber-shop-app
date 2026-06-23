@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Glow & Shine Beauty Parlor</title>
+    <style>
+        /* CSS STYLING - ALL IN ONE */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            background-color: #fffafd;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        /* Header & Navigation */
+        header {
+            background-color: #ffffff;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+            color: #ff4757;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+        }
+
+        .nav-links li {
+            margin-left: 25px;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: #444;
+            font-weight: 600;
+            transition: 0.3s;
+        }
+
+        .nav-links a:hover {
+            color: #ff4757;
+        }
+
+        /* Hero Section */
+        .hero {
+            background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url('https://images.unsplash.com/photo-1560066984-138dadb4c035?q=80&w=1200') no-repeat center center/cover;
+            height: 80vh;
+            color: white;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 0 20px;
+        }
+
+        .hero h1 {
+            font-size: 48px;
+            margin-bottom: 15px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+        }
+
+        .hero p {
+            font-size: 20px;
+            margin-bottom: 30px;
+            max-width: 600px;
+        }
+
+        .btn {
+            display: inline-block;
+            background-color: #ff4757;
+            color: white;
+            padding: 14px 35px;
+            text-decoration: none;
+            border-radius: 30px;
+            font-weight: bold;
+            transition: 0.3s;
+            box-shadow: 0 4px 15px rgba(255, 71, 87, 0.4);
+        }
+
+        .btn:hover {
+            background-color: #e84118;
+            transform: translateY(-2px);
+        }
+
+        /* Sections Common Settings */
+        .container {
+            max-width: 1200px;
+            margin: 60px auto;
+            padding: 0 20px;
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 36px;
+            color: #2f3542;
+            margin-bottom: 40px;
+            position: relative;
+        }
+
+        .section-title::after {
+            content: '';
+            display: block;
+            width: 60px;
+            height: 3px;
+            background-color: #ff4757;
+            margin: 10px auto 0;
+        }
+
+        /* Features / Why Choose Us */
+        .features {
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            text-align: center;
+        }
+
+        .card {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+            padding: 30px 20px;
+            margin: 10px;
+            flex: 1;
+            min-width: 280px;
+            border-top: 4px solid #ff4757;
+            transition: 0.3s;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+        }
+
+        .card h3 {
+            margin-bottom: 15px;
+            color: #2f3542;
+        }
+
+        /* Pricing Tables */
+        .service-category {
+            margin-top: 30px;
+            font-size: 22px;
+            color: #ff4757;
+            margin-bottom: 15px;
+        }
+
+        .price-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 40px;
+            background: white;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .price-table th {
+            background-color: #ff4757;
+            color: white;
+            padding: 15px;
+            text-align: left;
+            font-size: 18px;
+        }
+
+        .price-table td {
+            padding: 15px;
+            border-bottom: 1px solid #f1f2f6;
+            font-size: 16px;
+        }
+
+        .price-table tr:hover {
+            background-color: #ffeaa7;
+        }
+
+        /* Booking Form & Contact */
+        .contact-wrapper {
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 40px;
+        }
+
+        .booking-form {
+            background: white;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 5px 25px rgba(0,0,0,0.05);
+            flex: 1;
+            min-width: 320px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #57606f;
+        }
+
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ced6e0;
+            border-radius: 6px;
+            font-size: 16px;
+            outline: none;
+        }
+
+        .form-group input:focus, .form-group select:focus {
+            border-color: #ff4757;
+        }
+
+        .submit-btn {
+            background-color: #2ed573;
+            color: white;
+            border: none;
+            padding: 14px 20px;
+            font-size: 18px;
+            border-radius: 6px;
+            cursor: pointer;
+            width: 100%;
+            font-weight: bold;
+            transition: 0.3s;
+            box-shadow: 0 4px 15px rgba(46, 213, 115, 0.3);
+        }
+
+        .submit-btn:hover {
+            background-color: #26af5f;
+        }
+
+        .contact-info {
+            flex: 1;
+            min-width: 320px;
+            padding: 20px;
+        }
+
+        .info-box {
+            margin-bottom: 25px;
+        }
+
+        .info-box h3 {
+            color: #2f3542;
+            margin-bottom: 5px;
+        }
+
+        /* Footer */
+        footer {
+            background-color: #2f3542;
+            color: white;
+            text-align: center;
+            padding: 25px;
+            margin-top: 60px;
+            font-size: 14px;
+        }
+
+        /* Mobile View Responsive */
+        @media (max-width: 768px) {
+            nav {
+                flex-direction: column;
+            }
+            .nav-links {
+                margin-top: 15px;
+            }
+            .nav-links li {
+                margin: 0 10px;
+            }
+            .hero h1 {
+                font-size: 32px;
+            }
+            .contact-wrapper {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<!-- NAVIGATION BAR -->
+    <header>
+        <nav>
+            <div class="logo">✨ Glow & Shine</div>
+            <ul class="nav-links">
+                <li><a href="#home">Home</a></li>
+                <li><a href="#services">Services</a></li>
+                <li><a href="#booking">Book Appointment</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- HOME / HERO SECTION -->
+    <section id="home" class="hero">
+        <h1>Your Beauty, Our Passion</h1>
+        <p>Experience premium skin care, trendy hair styling, and flawless bridal makeup tailored just for you.</p>
+        <a href="#booking" class="btn">Book An Appointment</a>
+    </section>
+
+    <!-- WHY CHOOSE US SECTION -->
+    <section class="container">
+        <h2 class="section-title">Why Choose Us</h2>
+        <div class="features">
+            <div class="card">
+                <h3>Expert Stylists</h3>
+                <p>Our highly trained professionals offer personalized styling to match your unique personality.</p>
+            </div>
+            <div class="card">
+                <h3>Premium Products</h3>
+                <p>We care for your skin and hair, using only 100% genuine and top-tier global brands.</p>
+            </div>
+            <div class="card">
+                <h3>Affordable Luxury</h3>
+                <p>Get world-class salon treatments and luxury pampering without breaking the bank.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- SERVICES & PRICE LIST SECTION -->
+    <section id="services" class="container">
+        <h2 class="section-title">Our Services & Pricing</h2>
+
+        <div class="service-category">💇‍♀️ Hair Styling & Care</div>
+        <table class="price-table">
+            <thead>
+                <tr>
+                    <th>Service Name</th>
+                    <th>Price Range</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr><td>Classic Haircut & Styling</td><td>₹150 - ₹250</td></tr>
+                <tr><td>Deep Conditioning Hair Spa</td><td>₹500 - ₹800</td></tr>
+                <tr><td>Hair Straightening / Smoothening</td><td>Starts from ₹2500</td></tr>
+                <tr><td>Global Hair Coloring / Highlights</td><td>Starts from ₹400</td></tr>
+            </tbody>
+        </table>
+
+        <div class="service-category">💆‍♀️ Skin & Beauty Care</div>
+        <table class="price-table">
+            <thead>
+                <tr>
+                    <th>Service Name</th>
+                    <th>Price Range</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr><td>Refreshing Face Cleanup</td><td>₹300</td></tr>
+                <tr><td>Gold / Diamond Luxury Facial</td><td>₹800 - ₹1500</td></tr>
+                <tr><td>Eyebrow Threading & Shaping</td><td>₹30 - ₹50</td></tr>
+                <tr><td>Full Face De-Tan / Bleach</td><td>₹250</td></tr>
+            </tbody>
+        </table>
+
+        <div class="service-category">👰 Special Makeup Packages</div>
+        <table class="price-table">
+            <thead>
+                <tr>
+                    <th>Service Name</th>
+                    <th>Price Range</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr><td>Glamorous Party Makeup</td><td>₹1200 - ₹2000</td></tr>
+                <tr><td>Premium HD Bridal Package</td><td>Starts from ₹6000</td></tr>
+            </tbody>
+        </table>
+        <p style="text-align: center; font-style: italic; color: #747d8c;">*Prices may vary depending on hair length and product brands chosen.</p>
+    </section>
+
+    <!-- BOOKING & CONTACT SECTION -->
+    <section id="booking" class="container">
+        <h2 class="section-title">Book via WhatsApp</h2>
+        
+        <div class="contact-wrapper">
+            <!-- Appointment Form -->
+            <div class="booking-form">
+                <form id="whatsappForm" onsubmit="sendToWhatsapp(event)">
+                    <div class="form-group">
+                        <label for="name">Your Full Name:</label>
+                        <input type="text" id="name" placeholder="Enter your name" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="service">Select Service:</label>
+                        <select id="service" required>
+                            <option value="">-- Choose a Service --</option>
+                            <option value="Haircut & Styling">Haircut & Styling</option>
+                            <option value="Hair Spa">Hair Spa</option>
+                            <option value="Facial / Cleanup">Facial & Skin Care</option>
+                            <option value="Bridal / Party Makeup">Bridal / Party Makeup</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="datetime">Preferred Date & Time:</label>
+                        <input type="text" id="datetime" placeholder="e.g., 25th June, 3:00 PM" required>
+                    </div>
+
+                    <button type="submit" class="submit-btn">🟢 Send Booking to WhatsApp</button>
+                </form>
+            </div>
+
+            <!-- Contact Information -->
+            <div class="contact-info">
+                <div class="info-box">
+                    <h3>📍 Our Location</h3>
+                    <p>Milik Basti, Hojai, Assam - 782435</p>
+                </div>
+                <div class="info-box">
+                    <h3>⏰ Salon Hours</h3>
+                    <p>10:00 AM - 07:00 PM (Closed on Mondays)</p>
+                </div>
+                <div class="info-box">
+                    <h3>📞 Call Us</h3>
+                    <p>+91 XXXXXXXXXX</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer>
+        <p>&copy; 2026 Glow & Shine Beauty Parlor. All Rights Reserved.</p>
+    </footer>
+
+    <!-- JAVASCRIPT FOR WHATSAPP REDIRECTION -->
+    <script>
+        function sendToWhatsapp(event) {
+            event.preventDefault();
+            
+            // 1. यहाँ XXXXXXXXXX हटाकर अपना असली 10 अंकों का व्हाट्सएप नंबर डाल दें
+            const yourPhoneNumber = "XXXXXXXXXX"; 
+            
+            const name = document.getElementById('name').value;
+            const service = document.getElementById('service').value;
+            const datetime = document.getElementById('datetime').value;
+            
+            // Craft the message
+            const message = "Hello Glow & Shine Salon, I would like to book an appointment.\n\n" + 
+                            "Name: " + name + "\n" +
+                            "Service: " + service + "\n" +
+                            "Date & Time: " + datetime;
+            
+            // Encode message for URL
+            const encodedMessage = encodeURIComponent(message);
+            
+            // Open WhatsApp link
+            window.open("https://wa.me/91" + yourPhoneNumber + "?text=" + encodedMessage, "_blank");
+        }
+    </script>
+
+</body>
+</html>
